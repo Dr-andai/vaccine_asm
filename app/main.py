@@ -4,6 +4,12 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 import uvicorn
 
+import os
+import requests
+import dotenv
+
+HF_API_TOKEN = os.getenv("HF_TOKEN")
+
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
@@ -38,6 +44,40 @@ async def predict(
         "request": request,
         "score": risk_score,
         "alert": alert
+    })
+
+@app.get("/summarize", response_class=HTMLResponse)
+async def summarize_immunization(request: Request):
+    prompt = (
+        "Summarize how artificial intelligence and technology are transforming immunization "
+        "campaigns, especially in low-resource or rural settings. Keep it under 150 words."
+    )
+
+    headers = {
+        "Authorization": f"Bearer {HF_API_TOKEN}",
+        "Content-Type": "application/json"
+    }
+
+    payload = {
+        "inputs": prompt,
+        "parameters": {"max_new_tokens": 150},
+    }
+
+    # Replace with your actual model endpoint
+    response = requests.post(
+        "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.1",
+        headers=headers,
+        json=payload
+    )
+
+    if response.status_code == 200:
+        summary = response.json()[0]['generated_text']
+    else:
+        summary = "Failed to fetch summary. Try again later."
+
+    return templates.TemplateResponse("summary.html", {
+        "request": request,
+        "summary": summary
     })
 
 if __name__ == "__main__":
