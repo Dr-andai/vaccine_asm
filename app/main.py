@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request, Form
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from app.llm_utils import ask_mistral
+from app.llm_utilis_ import ask_mistral
 import uvicorn
 
 import os
@@ -61,10 +61,7 @@ async def vaccine_info(request: Request, topic: str = Form(...)):
         f"Include what it is, how it works, and who should get it."
     )
 
-    try:
-        response_text = ask_mistral(prompt)
-    except Exception as e:
-        response_text = f"Error generating response: {str(e)}"
+    response_text = ask_mistral(prompt)
 
     return templates.TemplateResponse("vaccine_response.html", {
         "request": request,
