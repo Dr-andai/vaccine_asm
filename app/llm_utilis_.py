@@ -3,6 +3,9 @@
 import os
 from huggingface_hub import InferenceClient
 
+from dotenv import load_dotenv
+load_dotenv()
+
 client = InferenceClient(
     provider="novita",
     api_key=os.environ.get("HF_TOKEN")
