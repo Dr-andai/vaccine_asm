@@ -4,12 +4,9 @@
 
   <form hx-post="/vaccine-info" hx-target="#chat-response">
     <button type="submit" name="topic" value="covid-19" class="btn">COVID-19 Vaccine</button>
-    <!-- You can add more buttons for TB, HPV, etc. -->
+    <button type="submit" name="topic" value="tb" class="btn">TB Vaccine</button>
+    <button type="submit" name="topic" value="pneumococcal" class="btn">Pneumococcal Vaccine</button>
   </form>
 
   <div id="chat-response" class="mt"></div>
-</div>
-<div class="card">
-  <h3>Model Response:</h3>
-  <p>{{ response }}</p>
 </div>
