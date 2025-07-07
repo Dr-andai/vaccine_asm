@@ -2,11 +2,14 @@ from fastapi import FastAPI, Request, Form
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from app.llm_utils import call_mistral_featherless
 import uvicorn
 
 import os
 import requests
-import dotenv
+
+from dotenv import load_dotenv
+load_dotenv()
 
 HF_API_TOKEN = os.getenv("HF_TOKEN")
 
@@ -48,32 +51,17 @@ async def predict(
 
 @app.get("/summarize", response_class=HTMLResponse)
 async def summarize_immunization(request: Request):
+    hf_token = os.getenv("HF_API_TOKEN")
+
     prompt = (
         "Summarize how artificial intelligence and technology are transforming immunization "
         "campaigns, especially in low-resource or rural settings. Keep it under 150 words."
     )
 
-    headers = {
-        "Authorization": f"Bearer {HF_API_TOKEN}",
-        "Content-Type": "application/json"
-    }
-
-    payload = {
-        "inputs": prompt,
-        "parameters": {"max_new_tokens": 150},
-    }
-
-    # Replace with your actual model endpoint
-    response = requests.post(
-        "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.1",
-        headers=headers,
-        json=payload
-    )
-
-    if response.status_code == 200:
-        summary = response.json()[0]['generated_text']
-    else:
-        summary = "Failed to fetch summary. Try again later."
+    try:
+        summary = call_mistral_featherless(prompt, hf_token)
+    except Exception as e:
+        summary = f"Error calling model: {str(e)}"
 
     return templates.TemplateResponse("summary.html", {
         "request": request,

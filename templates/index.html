@@ -11,10 +11,18 @@
     <p>This tool helps Community Health Workers (CHWs) serving Artisanal and Small-Scale Mining (ASM) communities in Kenya 
     to prioritize adult vaccination needs using AI-based risk scoring and cold chain recommendations.</p>
 
-    <button hx-get="/form" hx-target="#dynamic-content" class="btn">
-      Get Started
-    </button>
+    <!-- Buttons to load dynamic content -->
+    <div class="button-group">
+      <button hx-get="/form" hx-target="#dynamic-content" class="btn">
+        Get Started
+      </button>
 
+      <button hx-get="/summarize" hx-target="#dynamic-content" class="btn">
+        Summarize Immunization & Technology
+      </button>
+    </div>
+
+    <!-- This is where HTMX will load content -->
     <div id="dynamic-content" class="card mt"></div>
   </div>
 </body>

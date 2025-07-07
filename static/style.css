@@ -56,3 +56,9 @@ input[type="submit"]:hover {
 .mt {
   margin-top: 30px;
 }
+.button-group {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 20px;
+}
