@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>CHW Immunization Assistant</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>AI-Powered Immunization Support</h1>
+    <p>This tool helps Community Health Workers (CHWs) serving Artisanal and Small-Scale Mining (ASM) communities in Kenya 
+    to prioritize adult vaccination needs using AI-based risk scoring and cold chain recommendations.</p>
+
+    <button hx-get="/form" hx-target="#dynamic-content" class="btn">
+      Get Started
+    </button>
+
+    <div id="dynamic-content" class="card mt"></div>
+  </div>
+</body>
+</html>

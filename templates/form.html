@@ -1,0 +1,15 @@
+<form action="/predict" method="post" hx-post="/predict" hx-target="#dynamic-content">
+  <label>Age:</label>
+  <input type="number" name="age" required>
+
+  <label>Miner?</label>
+  <input type="checkbox" name="miner" value="true">
+
+  <label>HIV Positive?</label>
+  <input type="checkbox" name="hiv_positive" value="true">
+
+  <label>TB History?</label>
+  <input type="checkbox" name="tb_history" value="true">
+
+  <input type="submit" value="Submit">
+</form>
