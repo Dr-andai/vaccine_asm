@@ -1,0 +1,24 @@
+name: Sync to Hugging Face Space
+
+on:
+  push:
+    branches: [main]   # Adjust this if your branch is named differently
+  workflow_dispatch:   # Allows manual trigger from GitHub UI
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          lfs: true
+
+      - name: Push to HF Space
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          git remote add space "https://AndaiMD:${HF_TOKEN}@huggingface.co/spaces/AndaiMD/vaccine_asm"
+          git push space main --force
