@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request, Form
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from app.llm_utils import call_mistral_featherless
+from app.llm_utils import ask_mistral
 import uvicorn
 
 import os
@@ -49,24 +49,24 @@ async def predict(
         "alert": alert
     })
 
-@app.get("/summarize", response_class=HTMLResponse)
-async def summarize_immunization(request: Request):
-    hf_token = os.getenv("HF_API_TOKEN")
+@app.get("/vaccine-chat", response_class=HTMLResponse)
+async def vaccine_chat(request: Request):
+    return templates.TemplateResponse("vaccine_chat.html", {"request": request})
 
+
+@app.post("/vaccine-info", response_class=HTMLResponse)
+async def vaccine_info(request: Request, topic: str = Form(...)):
     prompt = (
-        "Summarize how artificial intelligence and technology are transforming immunization "
-        "campaigns, especially in low-resource or rural settings. Keep it under 150 words."
+        f"Give a brief and clear explanation of the {topic.upper()} vaccine. "
+        f"Include what it is, how it works, and who should get it."
     )
 
     try:
-        summary = call_mistral_featherless(prompt, hf_token)
+        response_text = ask_mistral(prompt)
     except Exception as e:
-        summary = f"Error calling model: {str(e)}"
+        response_text = f"Error generating response: {str(e)}"
 
-    return templates.TemplateResponse("summary.html", {
+    return templates.TemplateResponse("vaccine_response.html", {
         "request": request,
-        "summary": summary
+        "response": response_text
     })
-
-if __name__ == "__main__":
-    uvicorn.run("main:app", reload=True)

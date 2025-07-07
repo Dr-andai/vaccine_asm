@@ -1,0 +1,15 @@
+<div class="card">
+  <h2>Ask about Vaccines</h2>
+  <p>Select a topic below to get an AI-generated explanation.</p>
+
+  <form hx-post="/vaccine-info" hx-target="#chat-response">
+    <button type="submit" name="topic" value="covid-19" class="btn">COVID-19 Vaccine</button>
+    <!-- You can add more buttons for TB, HPV, etc. -->
+  </form>
+
+  <div id="chat-response" class="mt"></div>
+</div>
+<div class="card">
+  <h3>Model Response:</h3>
+  <p>{{ response }}</p>
+</div>

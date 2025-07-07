@@ -1,24 +1,30 @@
-import os
-import requests
+from transformers import AutoModelForCausalLM, AutoTokenizer
+import torch
 
-API_URL = "https://router.huggingface.co/featherless-ai/v1/chat/completions"
-MODEL_ID = "mistralai/Mistral-7B-Instruct-v0.2"
+# Load model and tokenizer once
+model_id = "mistralai/Mistral-7B-Instruct-v0.3"
+tokenizer = AutoTokenizer.from_pretrained(model_id)
+model = AutoModelForCausalLM.from_pretrained(
+    model_id,
+    torch_dtype=torch.bfloat16,
+    device_map="auto"
+)
 
-def call_mistral_featherless(prompt: str, hf_token: str) -> str:
-    headers = {
-        "Authorization": f"Bearer {hf_token}"
-    }
+def ask_mistral(prompt: str) -> str:
+    conversation = [{"role": "user", "content": prompt}]
 
-    payload = {
-        "model": MODEL_ID,
-        "messages": [
-            {
-                "role": "user",
-                "content": prompt
-            }
-        ]
-    }
+    inputs = tokenizer.apply_chat_template(
+        conversation,
+        add_generation_prompt=True,
+        return_dict=True,
+        return_tensors="pt",
+    )
+    inputs = {k: v.to(model.device) for k, v in inputs.items()}
 
-    response = requests.post(API_URL, headers=headers, json=payload)
-    response.raise_for_status()
-    return response.json()["choices"][0]["message"]["content"]
+    with torch.no_grad():
+        outputs = model.generate(**inputs, max_new_tokens=512)
+
+    response = tokenizer.decode(outputs[0], skip_special_tokens=True)
+    
+    # Strip prompt from response (only return model answer)
+    return response.split("user")[1].split("assistant")[-1].strip()
